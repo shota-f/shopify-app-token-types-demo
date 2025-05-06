@@ -1,6 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useRevalidator } from "@remix-run/react";
 import { authenticate } from "../shopify.server";
+import { useEffect, useState } from "react";
 
 // The `maximumAvailable` of the development store is 2000, so we will use 1900 of that for this example
 const LIMIT = 190;
@@ -34,10 +35,50 @@ const getTitleWithNow = (titleOrig: string, now: string) => {
   return `${titleWithoutPreviousNow} [${now}]`;
 };
 
+const useOnlineThrottleStatusObserver = () => {
+  const [throttleStatus, setThrottleStatus] = useState<{
+    maximumAvailable: number;
+    currentlyAvailable: number;
+    restoreRate: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    let timeout: any;
+
+    const getThrottleStatus = async () => {
+      const resp = await fetch("/online-throttle-status", {
+        signal: abortController.signal,
+      });
+      if (!resp.ok) {
+        setThrottleStatus(null);
+        return;
+      }
+
+      const { throttleStatus } = (await resp.json()) as any;
+      setThrottleStatus(throttleStatus);
+
+      timeout = setTimeout(getThrottleStatus, 1000);
+    };
+
+    getThrottleStatus();
+
+    return () => {
+      abortController.abort();
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  return throttleStatus;
+};
+
 export default function Route() {
   const { products } = useLoaderData<typeof loader>();
 
   const revalidator = useRevalidator();
+
+  const ots = useOnlineThrottleStatusObserver();
 
   return (
     <div>
@@ -45,6 +86,11 @@ export default function Route() {
         Show {LIMIT} products
       </h1>
       <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
+        <div>
+          <div>maxAvailable: {ots?.maximumAvailable}</div>
+          <div>currentlyAvailable: {ots?.currentlyAvailable}</div>
+          <div>restoreRate: {ots?.restoreRate}</div>
+        </div>
         <button
           onClick={async () => {
             //

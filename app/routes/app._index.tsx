@@ -163,7 +163,7 @@ export default function Route() {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(10, 1fr)",
-          gap: 8,
+          gap: 4,
           maxWidth: 1440,
           fontSize: 12,
         }}

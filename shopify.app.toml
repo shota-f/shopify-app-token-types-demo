@@ -3,7 +3,7 @@
 client_id = "46dbdfba0e1c0ddd51b459109a3c4e16"
 name = "tokens-test"
 handle = "tokens-test"
-application_url = "https://nato-responsible-tree-dispute.trycloudflare.com"
+application_url = "https://export-laptops-cornell-belle.trycloudflare.com"
 embedded = true
 
 [build]
@@ -23,13 +23,13 @@ api_version = "2025-04"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products"
+scopes = "read_products, write_products"
 
 [auth]
 redirect_urls = [
-  "https://nato-responsible-tree-dispute.trycloudflare.com/auth/callback",
-  "https://nato-responsible-tree-dispute.trycloudflare.com/auth/shopify/callback",
-  "https://nato-responsible-tree-dispute.trycloudflare.com/api/auth/callback"
+  "https://export-laptops-cornell-belle.trycloudflare.com/auth/callback",
+  "https://export-laptops-cornell-belle.trycloudflare.com/auth/shopify/callback",
+  "https://export-laptops-cornell-belle.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

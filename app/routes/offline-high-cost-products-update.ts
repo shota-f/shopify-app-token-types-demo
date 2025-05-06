@@ -44,7 +44,7 @@ const runHighCostProductsUpdate = async (
       }),
     });
 
-    if (resp.ok) {
+    if (!resp.ok) {
       throw new Response(await resp.text(), { status: resp.status });
     }
 

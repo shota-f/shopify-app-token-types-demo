@@ -83,46 +83,64 @@ export default function Route() {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: "bold", marginBottom: 24 }}>
-        Show {LIMIT} products
-      </h1>
-      <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
-        <div>
-          <h2>Online throttle status</h2>
-          <div>maxAvailable: {onlineThrottle?.maximumAvailable}</div>
-          <div>currentlyAvailable: {onlineThrottle?.currentlyAvailable}</div>
-          <div>restoreRate: {onlineThrottle?.restoreRate}</div>
-        </div>
-        <div>
-          <h2>Offline throttle status</h2>
-          <div>maxAvailable: {offlineThrottle?.maximumAvailable}</div>
-          <div>currentlyAvailable: {offlineThrottle?.currentlyAvailable}</div>
-          <div>restoreRate: {offlineThrottle?.restoreRate}</div>
-        </div>
-        <button
-          onClick={async () => {
-            //
-            const date = new Date();
-            const now = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          left: 0,
+          backgroundColor: "rgba(240,240,240)",
+          borderBottom: "1px solid",
+        }}
+      >
+        <h1 style={{ fontSize: 24, fontWeight: "bold", marginBottom: 24 }}>
+          Show {LIMIT} products and High Cost Query(1900pt) Demo
+        </h1>
+        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+          <div>
+            <h2 style={{ fontSize: 16, fontWeight: "bold" }}>
+              Online throttle status
+            </h2>
+            <div>maxAvailable: {onlineThrottle?.maximumAvailable}</div>
+            <div style={{ backgroundColor: "rgba(200,200,0,0.4)" }}>
+              currentlyAvailable: {onlineThrottle?.currentlyAvailable}
+            </div>
+            <div>restoreRate: {onlineThrottle?.restoreRate}</div>
+          </div>
+          <div>
+            <h2 style={{ fontSize: 16, fontWeight: "bold" }}>
+              Offline throttle status
+            </h2>
+            <div>maxAvailable: {offlineThrottle?.maximumAvailable}</div>
+            <div style={{ backgroundColor: "rgba(200,200,0,0.4)" }}>
+              currentlyAvailable: {offlineThrottle?.currentlyAvailable}
+            </div>
+            <div>restoreRate: {offlineThrottle?.restoreRate}</div>
+          </div>
+          <button
+            onClick={async () => {
+              //
+              const date = new Date();
+              const now = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 
-            await fetch("/offline-high-cost-products-update", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(
-                products.map((product) => ({
-                  ...product,
-                  title: getTitleWithNow(product.title, now),
-                })),
-              ),
-            });
+              await fetch("/offline-high-cost-products-update", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(
+                  products.map((product) => ({
+                    ...product,
+                    title: getTitleWithNow(product.title, now),
+                  })),
+                ),
+              });
 
-            revalidator.revalidate();
-          }}
-        >
-          Run High Cost Products Update with OfflineToken
-        </button>
+              revalidator.revalidate();
+            }}
+          >
+            Run High Cost Products(190) Update with OfflineToken
+          </button>
+        </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {products.map((product) => {

@@ -52,9 +52,11 @@ const runHighCostProductsUpdate = async (
   };
 
   await Promise.all(requestedProducts.map((product) => productUpdate(product)));
+
+  return null;
 };
 
-const RUN_PRODUCT_UPDATE = `#graphql
+export const RUN_PRODUCT_UPDATE = `#graphql
 mutation RunProductUpdate($product: ProductUpdateInput!) {
   productUpdate(product: $product) {
     product {

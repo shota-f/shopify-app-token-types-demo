@@ -73,6 +73,27 @@ const useThrottleStatusObserver = (tokenType: "online" | "offline") => {
   return throttleStatus;
 };
 
+const requestHightCostProductsUpdate = async (
+  products: { id: string; title: string }[],
+  tokenType: "online" | "offline",
+) => {
+  const date = new Date();
+  const now = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
+  await fetch(`/${tokenType}-high-cost-products-update`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(
+      products.map((product) => ({
+        ...product,
+        title: getTitleWithNow(product.title, now),
+      })),
+    ),
+  });
+};
+
 export default function Route() {
   const { products } = useLoaderData<typeof loader>();
 
@@ -118,27 +139,23 @@ export default function Route() {
           </div>
           <button
             onClick={async () => {
-              //
-              const date = new Date();
-              const now = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-
-              await fetch("/offline-high-cost-products-update", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(
-                  products.map((product) => ({
-                    ...product,
-                    title: getTitleWithNow(product.title, now),
-                  })),
-                ),
-              });
+              await requestHightCostProductsUpdate(products, "online");
 
               revalidator.revalidate();
             }}
           >
-            Run High Cost Products(190) Update with OfflineToken
+            Run High Cost Products(190) Update with <strong>Online</strong>{" "}
+            Token
+          </button>
+          <button
+            onClick={async () => {
+              await requestHightCostProductsUpdate(products, "offline");
+
+              revalidator.revalidate();
+            }}
+          >
+            Run High Cost Products(190) Update with <strong>Offline</strong>{" "}
+            Token
           </button>
         </div>
       </div>

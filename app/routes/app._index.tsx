@@ -121,7 +121,7 @@ export default function Route() {
             revalidator.revalidate();
           }}
         >
-          Run Bulk Mutation with OfflineToken
+          Run High Cost Products Update with OfflineToken
         </button>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>

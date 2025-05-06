@@ -35,7 +35,7 @@ const getTitleWithNow = (titleOrig: string, now: string) => {
   return `${titleWithoutPreviousNow} [${now}]`;
 };
 
-const useOnlineThrottleStatusObserver = () => {
+const useThrottleStatusObserver = (tokenType: "online" | "offline") => {
   const [throttleStatus, setThrottleStatus] = useState<{
     maximumAvailable: number;
     currentlyAvailable: number;
@@ -48,7 +48,7 @@ const useOnlineThrottleStatusObserver = () => {
     let timeout: any;
 
     const getThrottleStatus = async () => {
-      const resp = await fetch("/online-throttle-status", {
+      const resp = await fetch(`/${tokenType}-throttle-status`, {
         signal: abortController.signal,
       });
       if (!resp.ok) {
@@ -68,7 +68,7 @@ const useOnlineThrottleStatusObserver = () => {
       abortController.abort();
       clearTimeout(timeout);
     };
-  }, []);
+  }, [tokenType]);
 
   return throttleStatus;
 };
@@ -78,7 +78,8 @@ export default function Route() {
 
   const revalidator = useRevalidator();
 
-  const ots = useOnlineThrottleStatusObserver();
+  const onlineThrottle = useThrottleStatusObserver("online");
+  const offlineThrottle = useThrottleStatusObserver("offline");
 
   return (
     <div>
@@ -87,9 +88,16 @@ export default function Route() {
       </h1>
       <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
         <div>
-          <div>maxAvailable: {ots?.maximumAvailable}</div>
-          <div>currentlyAvailable: {ots?.currentlyAvailable}</div>
-          <div>restoreRate: {ots?.restoreRate}</div>
+          <h2>Online throttle status</h2>
+          <div>maxAvailable: {onlineThrottle?.maximumAvailable}</div>
+          <div>currentlyAvailable: {onlineThrottle?.currentlyAvailable}</div>
+          <div>restoreRate: {onlineThrottle?.restoreRate}</div>
+        </div>
+        <div>
+          <h2>Offline throttle status</h2>
+          <div>maxAvailable: {offlineThrottle?.maximumAvailable}</div>
+          <div>currentlyAvailable: {offlineThrottle?.currentlyAvailable}</div>
+          <div>restoreRate: {offlineThrottle?.restoreRate}</div>
         </div>
         <button
           onClick={async () => {
